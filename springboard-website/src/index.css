@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+/* Custom Overrides for Springboard Indian School */
+/* Mostly relying on the template's style.css, but adding minor React-specific fixes here */
+
+html, body, #root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+main.vs-main {
+  flex: 1;
+}
+
+/* Fix missing icons for custom React implemention if needed */
