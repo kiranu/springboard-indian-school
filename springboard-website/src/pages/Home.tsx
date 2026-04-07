@@ -494,7 +494,7 @@ export default function Home() {
       </section>
 
       {/* Grade Programs */}
-      <section className="vs-pro--area position-relative parallax-wrap" style={{ backgroundImage: 'url(/assets/img/bg/program-bg.png)' }}>
+      <section className="vs-pro--area position-relative parallax-wrap" style={{ backgroundImage: 'url(/assets/img/bg/program-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <div className="container">
           <div className="row align-items-center justify-content-center">
             <div className="col-lg-auto text-center text-lg-start">
