@@ -225,10 +225,10 @@ export default function Home() {
             <div className="col-lg-6 mb-30">
               <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="vs-about--image">
                 <div className="vs-about--image__figure1">
-                  <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=400&h=450&fit=crop" alt="about image" width="198" height="214" loading="lazy" style={{ objectFit: 'cover' }} />
+                  <img src="/assets/img/facilities/facilities1.jpg" alt="about image" width="198" height="214" loading="lazy" style={{ objectFit: 'cover' }} />
                 </div>
                 <div className="vs-about--image__figure2">
-                  <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=600&h=600&fit=crop" alt="about image" width="400" height="461" loading="lazy" style={{ objectFit: 'cover' }} />
+                  <img src="/assets/img/facilities/facilities2.jpg" alt="about image" width="400" height="461" loading="lazy" style={{ objectFit: 'cover' }} />
                 </div>
                 <div className="vs-about--image__ele1 parallax-element">
                   <img src="/assets/img/about/vs-about-h1-ele-1.svg" alt="elements" />
@@ -425,11 +425,11 @@ export default function Home() {
               loop={true}
               autoplay={{ delay: 6000 }}
               breakpoints={{
-                  0:    { slidesPerView: 1, spaceBetween: 20 },
-                  768:  { slidesPerView: 2, spaceBetween: 24 },
-                  992:  { slidesPerView: 3, spaceBetween: 28 },
-                  1200: { slidesPerView: 3, spaceBetween: 30 },
-                }}
+                0: { slidesPerView: 1, spaceBetween: 20 },
+                768: { slidesPerView: 2, spaceBetween: 24 },
+                992: { slidesPerView: 3, spaceBetween: 28 },
+                1200: { slidesPerView: 3, spaceBetween: 30 },
+              }}
               className="vs-carousel vs-carousel--class"
             >
               {[
