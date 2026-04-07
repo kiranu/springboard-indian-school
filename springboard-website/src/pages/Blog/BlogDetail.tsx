@@ -68,7 +68,8 @@ export default function BlogDetail() {
     )
   }
 
-  const paragraphs = (post.content || post.excerpt || '').split('\n\n').filter(Boolean)
+  // Strip empty Quill paragraphs (<p><br></p>) so the page isn't padded with blank lines
+  const sanitisedContent = (post.content || '').replace(/<p><br\s*\/?><\/p>/gi, '')
 
   return (
     <>
@@ -125,24 +126,14 @@ export default function BlogDetail() {
                     </span>
                   </div>
 
-                  {paragraphs.length > 0 ? (
-                    paragraphs.map((p, idx) => (
-                      <p key={idx} className="mb-4">{p}</p>
-                    ))
+                  {sanitisedContent ? (
+                    <div
+                      className="ql-content"
+                      dangerouslySetInnerHTML={{ __html: sanitisedContent }}
+                    />
                   ) : (
                     <p className="mb-4">{post.excerpt}</p>
                   )}
-
-                  <blockquote className="vs-quote">
-                    <p>"Education is the most powerful weapon which you can use to change the world."</p>
-                    <cite>Nelson Mandela</cite>
-                  </blockquote>
-
-                  <p className="mt-4">
-                    If you have any questions or would like to learn more about how we implement
-                    these concepts at Springboard Indian School, please don't hesitate to reach out
-                    to our administration team.
-                  </p>
 
                   <hr className="mb-25 mt-50" />
 

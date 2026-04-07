@@ -3,6 +3,7 @@ import api from '../../lib/api'
 import DataTable, { Column } from '../components/DataTable'
 import FileUpload from '../components/FileUpload'
 import MediaLibrary from './MediaLibrary'
+import RichTextEditor from '../components/RichTextEditor'
 
 interface Blog {
   id: number
@@ -211,9 +212,12 @@ export default function BlogEditor() {
 
           <div style={{ marginBottom: 20 }}>
             <label style={labelStyle}>Content *</label>
-            <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12}
-              placeholder="Write your blog post content here... (HTML supported)"
-              style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace' }} />
+            <RichTextEditor
+              value={form.content}
+              onChange={(val) => setForm({ ...form, content: val })}
+              placeholder="Write your blog post content here…"
+              minHeight={360}
+            />
           </div>
 
           {/* SEO & Meta Section */}

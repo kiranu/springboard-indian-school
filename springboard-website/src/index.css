@@ -19,3 +19,127 @@ main.vs-main {
 }
 
 /* Fix missing icons for custom React implemention if needed */
+
+/* ── Rich-text content renderer (Quill HTML output) ───────
+   Applied via className="ql-content" on the frontend
+   wherever dangerouslySetInnerHTML renders blog/event content.
+   ─────────────────────────────────────────────────────── */
+.ql-content {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #374151;
+  word-break: break-word;
+}
+
+.ql-content h1,
+.ql-content h2,
+.ql-content h3,
+.ql-content h4,
+.ql-content h5 {
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 1.6em 0 0.6em;
+  color: #111827;
+}
+
+.ql-content h1 { font-size: 2rem; }
+.ql-content h2 { font-size: 1.6rem; }
+.ql-content h3 { font-size: 1.3rem; }
+.ql-content h4 { font-size: 1.1rem; }
+
+.ql-content p {
+  margin: 0 0 1rem;
+}
+
+.ql-content ul,
+.ql-content ol {
+  padding-left: 1.5rem;
+  margin: 0 0 1rem;
+}
+
+.ql-content li {
+  margin-bottom: 0.4rem;
+}
+
+.ql-content blockquote {
+  border-left: 4px solid var(--vs-theme-color, #70167E);
+  background: #f9f5ff;
+  padding: 14px 20px;
+  margin: 1.4rem 0;
+  border-radius: 0 10px 10px 0;
+  color: #4c1d95;
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.ql-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 16px 20px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+.ql-content code {
+  background: #f3e8ff;
+  color: #6d28d9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.ql-content a {
+  color: #70167E;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ql-content a:hover {
+  color: #4a0e55;
+}
+
+.ql-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 1rem 0;
+  display: block;
+}
+
+.ql-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  overflow-x: auto;
+  display: block;
+}
+
+.ql-content table th,
+.ql-content table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.ql-content table th {
+  background: #f5f0ff;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.ql-content table tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+/* Alignment helpers Quill injects */
+.ql-content .ql-align-center { text-align: center; }
+.ql-content .ql-align-right  { text-align: right; }
+.ql-content .ql-align-justify { text-align: justify; }
+
+/* Indent levels */
+.ql-content .ql-indent-1 { padding-left: 2em; }
+.ql-content .ql-indent-2 { padding-left: 4em; }
+.ql-content .ql-indent-3 { padding-left: 6em; }

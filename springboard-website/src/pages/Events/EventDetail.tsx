@@ -65,7 +65,7 @@ export default function EventDetail() {
     )
   }
 
-  const paragraphs = (event.content || event.description || '').split('\n\n').filter(Boolean)
+  const sanitisedContent = (event.content || '').replace(/<p><br\s*\/?><\/p>/gi, '')
 
   return (
     <>
@@ -122,20 +122,14 @@ export default function EventDetail() {
                     </span>
                   </div>
 
-                  {paragraphs.length > 0 ? (
-                    paragraphs.map((p, idx) => (
-                      <p key={idx}>{p}</p>
-                    ))
+                  {sanitisedContent ? (
+                    <div
+                      className="ql-content"
+                      dangerouslySetInnerHTML={{ __html: sanitisedContent }}
+                    />
                   ) : (
                     <p>{event.description}</p>
                   )}
-
-                  <ul className="vs-list style2 pt-15 mb-35 column-count-2">
-                    <li>Engaging learning activities</li>
-                    <li>Expert guidance and support</li>
-                    <li>Interactive student sessions</li>
-                    <li>Holistic development opportunities</li>
-                  </ul>
 
                   <hr className="mb-25 mt-50" />
 

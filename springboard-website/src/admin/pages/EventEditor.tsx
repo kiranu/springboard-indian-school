@@ -3,6 +3,7 @@ import api from '../../lib/api'
 import DataTable, { Column } from '../components/DataTable'
 import FileUpload from '../components/FileUpload'
 import MediaLibrary from './MediaLibrary'
+import RichTextEditor from '../components/RichTextEditor'
 
 interface SchoolEvent {
   id: number
@@ -211,9 +212,12 @@ export default function EventEditor() {
 
           <div style={{ marginBottom: 20 }}>
             <label style={labelStyle}>Full Content</label>
-            <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={10}
-              placeholder="Detailed event description... (HTML supported)"
-              style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace' }} />
+            <RichTextEditor
+              value={form.content}
+              onChange={(val) => setForm({ ...form, content: val })}
+              placeholder="Detailed event description…"
+              minHeight={300}
+            />
           </div>
 
           {/* SEO & GEO Section */}
