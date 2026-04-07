@@ -19,11 +19,17 @@ const DEFAULT_PAGES: SeoPage[] = [
   { id: 3, page_key: 'admissions', page_label: 'Admissions Page', meta_title: 'School Admissions 2026-27 | Springboard Indian School Hyderabad', meta_description: 'Apply now for 2026-27 admissions at Springboard Indian School. Limited seats available. Pre-K to Grade 10 enrollment open.', og_title: 'Admissions Open 2026-27 – Apply Now', og_description: 'Secure your child\'s future. Limited seats. Apply today.', og_image: '', keywords: 'school admissions hyderabad, cbse admissions 2026, apply now' },
   { id: 4, page_key: 'academics', page_label: 'Academics Page', meta_title: 'CBSE Academic Programs | Springboard Indian School', meta_description: 'Explore our comprehensive CBSE academic programs from Pre-K through Grade 10, featuring modern teaching methods and holistic development.', og_title: 'Academic Excellence at Springboard', og_description: 'Discover our CBSE programs designed for holistic development.', og_image: '', keywords: 'cbse curriculum, academic programs, school curriculum hyderabad' },
   { id: 5, page_key: 'contact', page_label: 'Contact Page', meta_title: 'Contact Springboard Indian School Hyderabad', meta_description: 'Get in touch with Springboard Indian School. Visit us at our campus or call us. We\'re here to answer all your questions about admissions.', og_title: 'Contact Us – Springboard Indian School', og_description: 'Reach out to us for admissions and enquiries.', og_image: '', keywords: 'contact springboard school, school address hyderabad, school phone number' },
+  { id: 6, page_key: 'facilities', page_label: 'Facilities Page', meta_title: 'World-Class Facilities | Springboard Indian School Hyderabad', meta_description: 'Explore state-of-the-art facilities at Springboard Indian School — modern classrooms, sports complex, science labs, library, and more.', og_title: 'Our Facilities – Springboard Indian School', og_description: 'Modern infrastructure designed to inspire learning and growth.', og_image: '', keywords: 'school facilities hyderabad, school infrastructure, cbse school labs' },
+  { id: 7, page_key: 'gallery', page_label: 'Gallery Page', meta_title: 'Photo Gallery | Springboard Indian School Hyderabad', meta_description: 'Browse photos of campus life, events, sports, academics, and celebrations at Springboard Indian School Hyderabad.', og_title: 'Gallery – Springboard Indian School', og_description: 'A glimpse into the vibrant life at Springboard Indian School.', og_image: '', keywords: 'school gallery hyderabad, school photos, campus life springboard' },
+  { id: 8, page_key: 'events', page_label: 'Events Page', meta_title: 'School Events & Activities | Springboard Indian School', meta_description: 'Stay updated with upcoming events, workshops, cultural programs, and extracurricular activities at Springboard Indian School Hyderabad.', og_title: 'Events – Springboard Indian School', og_description: 'Discover upcoming events and activities at our school.', og_image: '', keywords: 'school events hyderabad, school activities, cultural programs cbse school' },
+  { id: 9, page_key: 'blog', page_label: 'Blog Page', meta_title: 'School Blog | News & Updates – Springboard Indian School', meta_description: 'Read the latest news, educational insights, and school updates from Springboard Indian School Hyderabad.', og_title: 'Blog – Springboard Indian School', og_description: 'News, insights, and stories from our school community.', og_image: '', keywords: 'school blog hyderabad, education news, springboard school updates' },
+  { id: 10, page_key: 'parent_portal', page_label: 'Parent Portal Page', meta_title: 'Parent Portal | Springboard Indian School Hyderabad', meta_description: 'Access the Springboard Indian School parent portal for student updates, fee details, notices, and communication with teachers.', og_title: 'Parent Portal – Springboard Indian School', og_description: 'Stay connected with your child\'s education journey.', og_image: '', keywords: 'parent portal school, school parent login, student updates hyderabad' },
 ]
 
 export default function SeoSettings() {
   const [pages, setPages] = useState<SeoPage[]>(DEFAULT_PAGES)
   const [activePage, setActivePage] = useState<SeoPage>(DEFAULT_PAGES[0])
+  const [apiPageKeys, setApiPageKeys] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -32,8 +38,18 @@ export default function SeoSettings() {
       try {
         const res = await api.get('/admin/seo/')
         if (res.data && res.data.length > 0) {
-          setPages(res.data)
-          setActivePage(res.data[0])
+          const apiPages: SeoPage[] = res.data
+          // Merge: use API data for known pages, keep defaults for the rest
+          const merged = DEFAULT_PAGES.map((defaultPage) => {
+            const apiPage = apiPages.find((p) => p.page_key === defaultPage.page_key)
+            return apiPage || defaultPage
+          })
+          // Append any extra pages from API not in defaults
+          const extras = apiPages.filter((p) => !DEFAULT_PAGES.find((d) => d.page_key === p.page_key))
+          const allPages = [...merged, ...extras]
+          setPages(allPages)
+          setActivePage(allPages[0])
+          setApiPageKeys(new Set(apiPages.map((p) => p.page_key)))
         }
       } catch { /* use defaults */ }
     }
@@ -43,9 +59,19 @@ export default function SeoSettings() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      await api.put(`/admin/seo/${activePage.id}/`, activePage)
+      let saved = activePage
+      if (apiPageKeys.has(activePage.page_key)) {
+        // Page exists in DB — update it
+        await api.put(`/admin/seo/${activePage.id}/`, activePage)
+      } else {
+        // New page — create it
+        const res = await api.post('/admin/seo/', activePage)
+        saved = res.data
+        setApiPageKeys((prev) => new Set([...prev, saved.page_key]))
+      }
+      setPages((prev) => prev.map((p) => p.page_key === saved.page_key ? saved : p))
+      setActivePage(saved)
     } catch { /* offline mode */ }
-    setPages((prev) => prev.map((p) => p.id === activePage.id ? activePage : p))
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
@@ -92,18 +118,22 @@ export default function SeoSettings() {
           <div style={{ padding: '12px 16px', borderBottom: '1px solid #f1f5f9', fontSize: 13, fontWeight: 600, color: '#64748b' }}>PAGES</div>
           {pages.map((page) => (
             <button
-              key={page.id}
+              key={page.page_key}
               onClick={() => setActivePage(page)}
               style={{
                 width: '100%', padding: '12px 16px', textAlign: 'left', border: 'none', cursor: 'pointer',
-                background: activePage.id === page.id ? '#eff6ff' : '#fff',
-                borderLeft: activePage.id === page.id ? '3px solid #1B4F8E' : '3px solid transparent',
-                fontSize: 14, color: activePage.id === page.id ? '#1B4F8E' : '#374151',
-                fontWeight: activePage.id === page.id ? 600 : 400,
+                background: activePage.page_key === page.page_key ? '#eff6ff' : '#fff',
+                borderLeft: activePage.page_key === page.page_key ? '3px solid #1B4F8E' : '3px solid transparent',
+                fontSize: 14, color: activePage.page_key === page.page_key ? '#1B4F8E' : '#374151',
+                fontWeight: activePage.page_key === page.page_key ? 600 : 400,
                 transition: 'background 0.1s',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}
             >
-              {page.page_label}
+              <span>{page.page_label}</span>
+              {!apiPageKeys.has(page.page_key) && (
+                <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 400 }}>not saved</span>
+              )}
             </button>
           ))}
         </div>

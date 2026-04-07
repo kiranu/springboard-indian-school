@@ -61,6 +61,21 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Editable metadata state
+  const [editName, setEditName] = useState('')
+  const [editAltText, setEditAltText] = useState('')
+  const [savingMeta, setSavingMeta] = useState(false)
+  const [metaSaved, setMetaSaved] = useState(false)
+
+  // Sync edit fields when selected file changes
+  useEffect(() => {
+    if (selectedFile) {
+      setEditName(selectedFile.name)
+      setEditAltText(selectedFile.alt_text || '')
+      setMetaSaved(false)
+    }
+  }, [selectedFile?.id])
+
   const fetchFiles = useCallback(async () => {
     try {
       const params: Record<string, string> = {}
@@ -107,6 +122,23 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
     try { await api.delete(`/admin/media/${file.id}/`) } catch { /* offline */ }
     setFiles((prev) => prev.filter((f) => f.id !== file.id))
     if (selectedFile?.id === file.id) setSelectedFile(null)
+  }
+
+  const handleSaveMeta = async () => {
+    if (!selectedFile) return
+    setSavingMeta(true)
+    try {
+      const res = await api.patch(`/admin/media/${selectedFile.id}/`, {
+        name: editName,
+        alt_text: editAltText,
+      })
+      const updated = { ...selectedFile, name: res.data.name ?? editName, alt_text: res.data.alt_text ?? editAltText }
+      setFiles((prev) => prev.map((f) => f.id === selectedFile.id ? updated : f))
+      setSelectedFile(updated)
+      setMetaSaved(true)
+      setTimeout(() => setMetaSaved(false), 3000)
+    } catch { /* offline */ }
+    setSavingMeta(false)
   }
 
   const copyUrl = (url: string) => {
@@ -312,6 +344,12 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
                   </td>
                   <td style={{ padding: '10px 16px' }}>
                     <div style={{ display: 'flex', gap: 6 }}>
+                      {!pickerMode && (
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedFile(file) }}
+                          style={{ padding: '4px 8px', borderRadius: 6, background: '#faf5ff', color: '#7c3aed', border: 'none', cursor: 'pointer', fontSize: 12 }} title="Edit metadata">
+                          <i className="fa-solid fa-pen" />
+                        </button>
+                      )}
                       <button onClick={(e) => { e.stopPropagation(); window.open(file.url, '_blank') }}
                         style={{ padding: '4px 8px', borderRadius: 6, background: '#f0f9ff', color: '#0369a1', border: 'none', cursor: 'pointer', fontSize: 12 }} title="Open">
                         <i className="fa-solid fa-arrow-up-right-from-square" />
@@ -333,10 +371,10 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
         </div>
       )}
 
-      {/* Detail panel / grid actions */}
-      {!pickerMode && selectedFile && viewMode === 'grid' && (
+      {/* Detail / Edit panel */}
+      {!pickerMode && selectedFile && (
         <div style={{
-          position: 'fixed', right: 0, top: 0, bottom: 0, width: 300,
+          position: 'fixed', right: 0, top: 0, bottom: 0, width: 320,
           background: '#fff', boxShadow: '-4px 0 20px rgba(0,0,0,0.1)', zIndex: 200,
           padding: 24, overflowY: 'auto',
         }}>
@@ -352,12 +390,11 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
           )}
 
           {[
-            { label: 'Name', value: selectedFile.name },
             { label: 'Type', value: selectedFile.file_type },
             { label: 'Size', value: selectedFile.size_display },
             { label: 'Uploaded', value: new Date(selectedFile.uploaded_at).toLocaleString() },
           ].map((item) => (
-            <div key={item.label} style={{ marginBottom: 12 }}>
+            <div key={item.label} style={{ marginBottom: 10 }}>
               <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>{item.label}</div>
               <div style={{ fontSize: 13, color: '#1e293b', wordBreak: 'break-all' }}>{item.value}</div>
             </div>
@@ -370,13 +407,56 @@ export default function MediaLibrary({ pickerMode = false, pickerFilter, onPick 
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Editable metadata */}
+          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 16, marginTop: 4 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b' }}>Edit Metadata</div>
+              {metaSaved && (
+                <span style={{ fontSize: 12, color: '#059669' }}>
+                  <i className="fa-solid fa-check-circle" style={{ marginRight: 4 }} />Saved
+                </span>
+              )}
+            </div>
+
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+                File Name
+              </label>
+              <input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                style={{ width: '100%', padding: '8px 10px', borderRadius: 7, border: '1px solid #d1d5db', fontSize: 13, boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+                Alt Text
+              </label>
+              <textarea
+                value={editAltText}
+                onChange={(e) => setEditAltText(e.target.value)}
+                rows={3}
+                placeholder="Describe this file for accessibility..."
+                style={{ width: '100%', padding: '8px 10px', borderRadius: 7, border: '1px solid #d1d5db', fontSize: 13, resize: 'vertical', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <button
+              onClick={handleSaveMeta}
+              disabled={savingMeta}
+              style={{ width: '100%', padding: '9px', borderRadius: 8, background: '#1B4F8E', color: '#fff', border: 'none', cursor: savingMeta ? 'default' : 'pointer', fontSize: 13, fontWeight: 600, opacity: savingMeta ? 0.7 : 1, marginBottom: 8 }}>
+              {savingMeta ? 'Saving...' : 'Save Metadata'}
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 4 }}>
             <button onClick={() => copyUrl(selectedFile.url)}
-              style={{ padding: '9px', borderRadius: 8, background: '#1B4F8E', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+              style={{ padding: '9px', borderRadius: 8, background: '#f0f9ff', color: '#0369a1', border: 'none', cursor: 'pointer', fontSize: 13 }}>
               <i className="fa-solid fa-copy" style={{ marginRight: 6 }} />Copy URL
             </button>
             <button onClick={() => window.open(selectedFile.url, '_blank')}
-              style={{ padding: '9px', borderRadius: 8, background: '#f0f9ff', color: '#0369a1', border: 'none', cursor: 'pointer', fontSize: 13 }}>
+              style={{ padding: '9px', borderRadius: 8, background: '#f8fafc', color: '#475569', border: 'none', cursor: 'pointer', fontSize: 13 }}>
               <i className="fa-solid fa-arrow-up-right-from-square" style={{ marginRight: 6 }} />Open File
             </button>
             <button onClick={() => handleDelete(selectedFile)}
