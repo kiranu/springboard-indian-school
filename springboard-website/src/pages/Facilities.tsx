@@ -15,41 +15,57 @@ export default function Facilities() {
       icon: <FaVideo />,
       title: 'CCTV Security System',
       desc: 'Complete campus coverage with 24/7 monitoring for maximum safety and security.',
+      color: '#3B82F6',
+      lightBg: '#EFF6FF',
     },
     {
       icon: <FaBook />,
       title: 'Digital Library',
       desc: 'Extensive collection of books, educational resources, and digital learning materials.',
+      color: '#F59E0B',
+      lightBg: '#FFFBEB',
     },
     {
       icon: <FaComputer />,
       title: 'Computer Lab',
       desc: 'Modern lab with latest computers for coding, digital skills, and IT education.',
+      color: '#6366F1',
+      lightBg: '#EEF2FF',
     },
     {
       icon: <FaMicroscope />,
       title: 'Science Laboratory',
       desc: 'Well-equipped lab for hands-on experiments in Physics, Chemistry, and Biology.',
+      color: '#10B981',
+      lightBg: '#ECFDF5',
     },
     {
       icon: <FaFutbol />,
       title: 'Sports Ground',
       desc: 'Spacious playground for outdoor games, athletics, and physical fitness activities.',
+      color: '#EF4444',
+      lightBg: '#FEF2F2',
     },
     {
       icon: <FaBus />,
       title: 'School Bus Service',
-      desc: 'Safe and comfortable transportation covering major areas with trained drivers.',
+      desc: 'Safe and comfortable transportation covering major areas with GPS tracking and trained drivers.',
+      color: '#F97316',
+      lightBg: '#FFF7ED',
     },
     {
       icon: <FaUtensils />,
       title: 'Cafeteria',
-      desc: 'Hygienic dining facilities with nutritious meals prepared by trained staff.',
+      desc: 'Hygienic dining facilities serving nutritious, vegetarian meals prepared by trained staff.',
+      color: '#EC4899',
+      lightBg: '#FDF2F8',
     },
     {
       icon: <FaUserDoctor />,
       title: 'Medical Room',
-      desc: 'First aid facility with trained medical staff and emergency protocols in place.',
+      desc: 'First aid facility with trained medical staff and clear emergency protocols in place.',
+      color: '#14B8A6',
+      lightBg: '#F0FDFA',
     },
   ]
 
@@ -88,26 +104,100 @@ export default function Facilities() {
               <h2 className="vs-title__main">Experience Our Campus</h2>
             </div>
           </div>
-          <div className="row justify-content-center">
+          <div className="row justify-content-center g-4 mt-2">
             {facilities.map((facility, idx) => (
-              <motion.div 
-                key={idx} 
-                initial="hidden" 
-                whileInView="visible" 
+              <motion.div
+                key={idx}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
                 variants={{
                   hidden: { opacity: 0, y: 30 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.1 } }
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.08 } }
                 }}
-                className="col-xl-3 col-lg-4 col-sm-6 mb-30"
+                className="col-xl-3 col-lg-4 col-sm-6"
               >
-                <div className="feature-style1 text-center h-100 shadow-sm rounded p-4 border feature-card hover-lift transition-all">
-                  <div className="feature-style1__icon bg-theme-color1 text-white rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style={{ width: '80px', height: '80px', fontSize: '36px' }}>
+                <motion.div
+                  whileHover={{ y: -10, boxShadow: `0 24px 56px ${facility.color}25` }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 22,
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.07)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'default',
+                    border: `1px solid ${facility.lightBg}`,
+                  }}
+                >
+                  {/* Coloured top header */}
+                  <div style={{
+                    background: facility.lightBg,
+                    padding: '36px 24px 48px',
+                    textAlign: 'center',
+                    position: 'relative',
+                  }}>
+                    {/* Decorative dots */}
+                    <div style={{
+                      position: 'absolute', top: 12, right: 14,
+                      width: 36, height: 36, borderRadius: '50%',
+                      background: `${facility.color}18`,
+                    }} />
+                    <div style={{
+                      position: 'absolute', top: 28, right: 36,
+                      width: 16, height: 16, borderRadius: '50%',
+                      background: `${facility.color}25`,
+                    }} />
+                  </div>
+
+                  {/* Floating icon circle — overlaps header and body */}
+                  <div style={{
+                    width: 76, height: 76, borderRadius: '50%',
+                    background: '#fff',
+                    border: `4px solid ${facility.lightBg}`,
+                    boxShadow: `0 8px 28px ${facility.color}35`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 32, color: facility.color,
+                    margin: '-38px auto 0',
+                    position: 'relative',
+                    zIndex: 2,
+                    flexShrink: 0,
+                  }}>
                     {facility.icon}
                   </div>
-                  <h4 className="feature-style1__title">{facility.title}</h4>
-                  <p className="feature-style1__text">{facility.desc}</p>
-                </div>
+
+                  {/* Card body */}
+                  <div style={{
+                    padding: '20px 24px 28px',
+                    textAlign: 'center',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}>
+                    <h4 style={{
+                      fontWeight: 700, color: '#1e293b',
+                      marginBottom: 10, fontSize: 17,
+                      marginTop: 4,
+                    }}>
+                      {facility.title}
+                    </h4>
+                    <p style={{
+                      color: '#64748b', fontSize: 14,
+                      lineHeight: 1.75, margin: 0,
+                    }}>
+                      {facility.desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom accent bar */}
+                  <div style={{
+                    height: 5,
+                    background: `linear-gradient(90deg, ${facility.color}80, ${facility.color})`,
+                  }} />
+                </motion.div>
               </motion.div>
             ))}
           </div>

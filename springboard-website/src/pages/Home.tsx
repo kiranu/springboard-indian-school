@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaArrowRight, FaArrowLeft, FaStar } from 'react-icons/fa6'
+import { FaArrowRight, FaArrowLeft, FaStar, FaChalkboardUser, FaShieldHalved, FaGraduationCap, FaPaintbrush, FaTrophy, FaUsers } from 'react-icons/fa6'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Navigation, EffectFade } from 'swiper/modules'
 // @ts-ignore
@@ -37,6 +37,51 @@ const fadeInRight = {
   hidden: { opacity: 0, x: 40 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
 }
+
+const WHY_CHOOSE_ITEMS = [
+  {
+    Icon: FaChalkboardUser,
+    title: 'Expert Educators',
+    desc: 'Highly qualified, experienced and caring teachers who inspire every child\'s unique potential.',
+    iconColor: '#EF4444',
+    lightBg: '#FEF2F2',
+  },
+  {
+    Icon: FaShieldHalved,
+    title: 'Safe & Secure Campus',
+    desc: 'CCTV-monitored, fully gated campus with background-verified staff for 100% child safety.',
+    iconColor: '#3B82F6',
+    lightBg: '#EFF6FF',
+  },
+  {
+    Icon: FaGraduationCap,
+    title: 'CBSE Curriculum',
+    desc: 'Nationally recognised CBSE curriculum enriched with activity-based experiential learning.',
+    iconColor: '#F59E0B',
+    lightBg: '#FFFBEB',
+  },
+  {
+    Icon: FaPaintbrush,
+    title: 'Creative Learning',
+    desc: 'Art, music, drama and hands-on projects to nurture creativity and joyful self-expression.',
+    iconColor: '#8B5CF6',
+    lightBg: '#F5F3FF',
+  },
+  {
+    Icon: FaTrophy,
+    title: 'Sports & Co-Curricular',
+    desc: 'Rich sports programs and extracurricular activities for holistic, all-round development.',
+    iconColor: '#10B981',
+    lightBg: '#ECFDF5',
+  },
+  {
+    Icon: FaUsers,
+    title: 'Parent Partnership',
+    desc: 'Regular PTMs, parent portal and open communication channels for a collaborative journey.',
+    iconColor: '#EC4899',
+    lightBg: '#FDF2F8',
+  },
+]
 
 const FALLBACK_GALLERY = [
   { id: 1, title: 'Campus Life', category: 'Campus', image_url: '/assets/img/gallery/gallery-h1-1-1.jpg' },
@@ -263,6 +308,96 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="space space-extra-bottom z-index-common overflow-hidden" style={{ background: 'linear-gradient(180deg, #fdfcf9 0%, #f0f7ff 100%)' }}>
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-8 mx-auto">
+              <div className="vs-title text-center title-anime animation-style2">
+                <div className="title-anime__wrap">
+                  <span className="vs-title__sub">Why Choose Us</span>
+                  <h2 className="vs-title__main">The Springboard <span>Advantage</span></h2>
+                </div>
+                <p style={{ color: '#64748b', fontSize: 15, marginTop: 8 }}>
+                  We go beyond academics to build confident, curious and compassionate learners.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="row gy-4 justify-content-center mt-2">
+            {WHY_CHOOSE_ITEMS.map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.1 } }
+                }}
+                className="col-xl-4 col-md-6"
+              >
+                <motion.div
+                  whileHover={{ y: -8, boxShadow: `0 20px 48px ${item.iconColor}25` }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 24,
+                    padding: '40px 32px 36px',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                    border: `2px solid ${item.lightBg}`,
+                    height: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    cursor: 'default',
+                  }}
+                >
+                  {/* Decorative background blob */}
+                  <div style={{
+                    position: 'absolute', top: -24, right: -24,
+                    width: 110, height: 110, borderRadius: '50%',
+                    background: item.lightBg, opacity: 0.8,
+                  }} />
+                  <div style={{
+                    position: 'absolute', bottom: -18, left: -18,
+                    width: 72, height: 72, borderRadius: '50%',
+                    background: item.lightBg, opacity: 0.5,
+                  }} />
+
+                  {/* Icon circle */}
+                  <div style={{
+                    width: 84, height: 84, borderRadius: '50%',
+                    background: item.lightBg,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    margin: '0 auto 24px',
+                    fontSize: 34, color: item.iconColor,
+                    position: 'relative',
+                    boxShadow: `0 8px 28px ${item.iconColor}30`,
+                    border: `3px solid ${item.iconColor}20`,
+                  }}>
+                    <item.Icon />
+                  </div>
+
+                  {/* Top accent strip */}
+                  <div style={{
+                    position: 'absolute', top: 0, left: 0, right: 0, height: 5,
+                    background: item.iconColor, borderRadius: '24px 24px 0 0',
+                  }} />
+
+                  <h4 style={{ fontWeight: 700, color: '#1e293b', marginBottom: 12, fontSize: 18, position: 'relative' }}>
+                    {item.title}
+                  </h4>
+                  <p style={{ color: '#64748b', fontSize: 15, lineHeight: 1.75, margin: 0, position: 'relative' }}>
+                    {item.desc}
+                  </p>
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
