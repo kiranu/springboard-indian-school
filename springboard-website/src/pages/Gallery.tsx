@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaEye } from 'react-icons/fa'
+import { FaEye, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import api from '../lib/api'
 import SeoHead from '../components/seo/SeoHead'
 import AdmissionCta from '../components/shared/AdmissionCta'
@@ -24,6 +24,7 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [categories, setCategories] = useState<string[]>([])
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   // Fetch gallery data from API
   useEffect(() => {
@@ -52,6 +53,19 @@ export default function Gallery() {
     ? items
     : items.filter(item => item.category === selectedCategory)
 
+  // Keyboard navigation for lightbox
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (lightboxIndex === null) return
+    if (e.key === 'Escape') setLightboxIndex(null)
+    if (e.key === 'ArrowLeft') setLightboxIndex(i => (i! > 0 ? i! - 1 : filteredItems.length - 1))
+    if (e.key === 'ArrowRight') setLightboxIndex(i => (i! < filteredItems.length - 1 ? i! + 1 : 0))
+  }, [lightboxIndex, filteredItems.length])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
   // Arrange items in rows (4 items per row)
   const galleryRows = []
   for (let i = 0; i < filteredItems.length; i += 4) {
@@ -63,6 +77,13 @@ export default function Gallery() {
   const itemsWithClasses = galleryRows.map(row =>
     row.map((item, idx) => ({ ...item, colClass: colClasses[idx % 4] }))
   )
+
+  const openLightbox = (item: GalleryItem) => {
+    const idx = filteredItems.findIndex(i => i.id === item.id)
+    setLightboxIndex(idx)
+  }
+
+  const currentItem = lightboxIndex !== null ? filteredItems[lightboxIndex] : null
 
   return (
     <>
@@ -159,7 +180,11 @@ export default function Gallery() {
                   className={`vs-gallery ${item.colClass}`}
                 >
                   <div className="vs-gallery__figure">
-                    <a className="vs-gallery__image--link" href={item.image_url} target="_blank" rel="noreferrer">
+                    <div
+                      className="vs-gallery__image--link"
+                      onClick={() => openLightbox(item)}
+                      style={{ cursor: 'pointer', display: 'block', width: '100%', height: '100%' }}
+                    >
                       <img
                         className="vs-gallery__image"
                         src={item.image_url}
@@ -167,12 +192,16 @@ export default function Gallery() {
                         loading="lazy"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
-                    </a>
+                    </div>
                   </div>
                   <div className="vs-gallery__hover">
-                    <a href={item.image_url} target="_blank" rel="noreferrer" className="vs-gallery__icon">
+                    <button
+                      onClick={() => openLightbox(item)}
+                      className="vs-gallery__icon"
+                      style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
                       <FaEye />
-                    </a>
+                    </button>
                     <span className="vs-gallery__cate">{item.category}</span>
                     <h4 className="vs-gallery__heading">{item.title}</h4>
                   </div>
@@ -186,6 +215,84 @@ export default function Gallery() {
 
       {/* CTA */}
       <AdmissionCta subtitle="Love what you see? Schedule a campus visit to experience our school firsthand!" />
+
+      {/* Lightbox */}
+      {currentItem && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)',
+            zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close */}
+          <button
+            onClick={() => setLightboxIndex(null)}
+            style={{
+              position: 'absolute', top: 20, right: 20,
+              background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+              width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: '#fff', fontSize: 20, zIndex: 1,
+            }}
+          >
+            <FaTimes />
+          </button>
+
+          {/* Prev */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setLightboxIndex(i => (i! > 0 ? i! - 1 : filteredItems.length - 1))
+            }}
+            style={{
+              position: 'absolute', left: 16,
+              background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+              width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: '#fff', fontSize: 22,
+            }}
+          >
+            <FaChevronLeft />
+          </button>
+
+          {/* Image container */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '88vw' }}
+          >
+            <img
+              src={currentItem.image_url}
+              alt={currentItem.title}
+              style={{
+                maxWidth: '88vw', maxHeight: '80vh',
+                objectFit: 'contain', borderRadius: 8,
+                boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+              }}
+            />
+            <div style={{ marginTop: 14, textAlign: 'center' }}>
+              <div style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>{currentItem.title}</div>
+              <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, marginTop: 4 }}>
+                {currentItem.category} &nbsp;·&nbsp; {lightboxIndex! + 1} / {filteredItems.length}
+              </div>
+            </div>
+          </div>
+
+          {/* Next */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setLightboxIndex(i => (i! < filteredItems.length - 1 ? i! + 1 : 0))
+            }}
+            style={{
+              position: 'absolute', right: 16,
+              background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+              width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: '#fff', fontSize: 22,
+            }}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
     </>
   )
 }
