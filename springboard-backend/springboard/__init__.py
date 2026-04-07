@@ -1,9 +1,9 @@
 # Use PyMySQL as a drop-in replacement for mysqlclient (no C libraries needed)
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-except ImportError:
-    pass  # mysqlclient is installed directly — that's fine too
+# try:
+#     import pymysql
+#     pymysql.install_as_MySQLdb()
+# except ImportError:
+#     pass  # mysqlclient is installed directly — that's fine too
 
 # Celery is optional — only load if redis/celery are installed
 try:
