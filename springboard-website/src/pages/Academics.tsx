@@ -211,39 +211,109 @@ export default function Academics() {
       </section>
 
       {/* Curriculum Highlights */}
-      <section className="space">
+      <section className="space z-index-common overflow-hidden" style={{ background: 'linear-gradient(180deg, #fdfcf9 0%, #f0f7ff 100%)' }}>
         <div className="container">
           <div className="vs-title text-center title-anime animation-style2">
             <div className="title-anime__wrap">
               <span className="vs-title__sub">Why Choose Us</span>
-              <h2 className="vs-title__main">Curriculum Highlights</h2>
+              <h2 className="vs-title__main">Curriculum <span>Highlights</span></h2>
             </div>
+            <p style={{ color: '#64748b', fontSize: 15, marginTop: 8 }}>
+              A well-rounded academic experience designed for every stage of a child's growth.
+            </p>
           </div>
-          <div className="row">
+          <div className="row g-4 justify-content-center mt-2">
             {[
-              { icon: <FaBookOpen />, title: 'CBSE Aligned', desc: 'Following National Board of Education standards', color: 'bg-theme-color1' },
-              { icon: <FaChalkboardUser />, title: 'Qualified Teachers', desc: 'Experienced and trained educators guiding students', color: 'bg-theme-color2' },
-              { icon: <FaLaptopCode />, title: 'Tech Integration', desc: 'Modern tools and digital learning platforms', color: 'bg-theme-color3' },
-              { icon: <FaEarthAsia />, title: 'Multilingual', desc: 'English, Hindi, and regional language exposure', color: 'bg-theme-color4' },
+              { icon: <FaBookOpen />,      title: 'CBSE Aligned',       desc: 'Nationally recognised CBSE curriculum designed to build strong academic foundations from early on.',   color: '#3B82F6', lightBg: '#EFF6FF' },
+              { icon: <FaChalkboardUser />, title: 'Qualified Teachers',  desc: 'Experienced, trained and caring educators who know how to bring out the best in every child.',        color: '#F97316', lightBg: '#FFF7ED' },
+              { icon: <FaLaptopCode />,     title: 'Tech Integration',    desc: 'Smart classrooms, digital tools and modern learning platforms to prepare students for tomorrow.',     color: '#8B5CF6', lightBg: '#F5F3FF' },
+              { icon: <FaEarthAsia />,      title: 'Multilingual',        desc: 'English, Hindi and Telugu language exposure under the CBSE three-language formula for global readiness.', color: '#10B981', lightBg: '#ECFDF5' },
             ].map((item, idx) => (
-              <motion.div 
-                key={idx} 
-                initial="hidden" 
-                whileInView="visible" 
+              <motion.div
+                key={idx}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
                 variants={{
                   hidden: { opacity: 0, y: 30 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.1 } }
                 }}
-                className="col-lg-3 col-md-6 mb-4"
+                className="col-xl-3 col-md-6"
               >
-                <div className="feature-style1 text-center bg-white h-100 shadow-sm rounded p-4 border feature-card hover-lift transition-all">
-                  <div className={`feature-style1__icon ${item.color} text-white rounded-circle mx-auto d-flex align-items-center justify-content-center mb-4`} style={{ width: '80px', height: '80px', fontSize: '36px' }}>
+                <motion.div
+                  whileHover={{ y: -10, boxShadow: `0 24px 56px ${item.color}25` }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 22,
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.07)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'default',
+                    border: `1px solid ${item.lightBg}`,
+                  }}
+                >
+                  {/* Coloured top header */}
+                  <div style={{
+                    background: item.lightBg,
+                    padding: '36px 24px 48px',
+                    textAlign: 'center',
+                    position: 'relative',
+                  }}>
+                    {/* Decorative dots */}
+                    <div style={{
+                      position: 'absolute', top: 12, right: 14,
+                      width: 36, height: 36, borderRadius: '50%',
+                      background: `${item.color}18`,
+                    }} />
+                    <div style={{
+                      position: 'absolute', top: 28, right: 36,
+                      width: 16, height: 16, borderRadius: '50%',
+                      background: `${item.color}25`,
+                    }} />
+                  </div>
+
+                  {/* Floating icon circle */}
+                  <div style={{
+                    width: 76, height: 76, borderRadius: '50%',
+                    background: '#fff',
+                    border: `4px solid ${item.lightBg}`,
+                    boxShadow: `0 8px 28px ${item.color}35`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 32, color: item.color,
+                    margin: '-38px auto 0',
+                    position: 'relative',
+                    zIndex: 2,
+                    flexShrink: 0,
+                  }}>
                     {item.icon}
                   </div>
-                  <h4 className="feature-style1__title">{item.title}</h4>
-                  <p className="feature-style1__text">{item.desc}</p>
-                </div>
+
+                  {/* Card body */}
+                  <div style={{
+                    padding: '20px 24px 28px',
+                    textAlign: 'center',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}>
+                    <h4 style={{ fontWeight: 700, color: '#1e293b', marginBottom: 10, fontSize: 17, marginTop: 4 }}>
+                      {item.title}
+                    </h4>
+                    <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.75, margin: 0 }}>
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom accent bar */}
+                  <div style={{
+                    height: 5,
+                    background: `linear-gradient(90deg, ${item.color}80, ${item.color})`,
+                  }} />
+                </motion.div>
               </motion.div>
             ))}
           </div>
