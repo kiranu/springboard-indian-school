@@ -144,6 +144,7 @@ export default function BlogEditor() {
           searchPlaceholder="Search blogs..."
           onAdd={() => { setForm(EMPTY_BLOG); setEditingId(null); setShowForm(true); setSeoOpen(false) }}
           addLabel="New Post"
+          onView={(row) => window.open('/blog/' + row.slug, '_blank')}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />

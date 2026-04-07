@@ -12,6 +12,7 @@ interface DataTableProps<T = any> {
   data: T[]
   onEdit?: (row: T) => void
   onDelete?: (row: T) => void
+  onView?: (row: T) => void
   searchPlaceholder?: string
   title?: string
   onAdd?: () => void
@@ -19,7 +20,7 @@ interface DataTableProps<T = any> {
 }
 
 export default function DataTable<T extends { id?: number | string }>({
-  columns, data, onEdit, onDelete, searchPlaceholder = 'Search...', title, onAdd, addLabel = 'Add New',
+  columns, data, onEdit, onDelete, onView, searchPlaceholder = 'Search...', title, onAdd, addLabel = 'Add New',
 }: DataTableProps<T>) {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -81,10 +82,10 @@ export default function DataTable<T extends { id?: number | string }>({
                   width: col.width,
                 }}>{col.label}</th>
               ))}
-              {(onEdit || onDelete) && (
+              {(onView || onEdit || onDelete) && (
                 <th style={{
                   padding: '10px 16px', fontSize: 12, fontWeight: 600, color: '#64748b',
-                  textAlign: 'center', textTransform: 'uppercase', width: 120,
+                  textAlign: 'center', textTransform: 'uppercase', width: 140,
                 }}>Actions</th>
               )}
             </tr>
@@ -97,9 +98,21 @@ export default function DataTable<T extends { id?: number | string }>({
                     {col.render ? col.render((row as any)[col.key], row) : (row as any)[col.key]}
                   </td>
                 ))}
-                {(onEdit || onDelete) && (
+                {(onView || onEdit || onDelete) && (
                   <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                      {onView && (
+                        <button
+                          onClick={() => onView(row)}
+                          style={{
+                            padding: '6px 10px', borderRadius: 6, background: '#f0fdf4',
+                            color: '#16a34a', border: 'none', cursor: 'pointer', fontSize: 12,
+                          }}
+                          title="View on site"
+                        >
+                          <i className="fa-solid fa-eye" />
+                        </button>
+                      )}
                       {onEdit && (
                         <button
                           onClick={() => onEdit(row)}
@@ -131,7 +144,7 @@ export default function DataTable<T extends { id?: number | string }>({
             ))}
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={columns.length + (onEdit || onDelete ? 1 : 0)} style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>
+                <td colSpan={columns.length + (onView || onEdit || onDelete ? 1 : 0)} style={{ padding: 40, textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>
                   No records found.
                 </td>
               </tr>

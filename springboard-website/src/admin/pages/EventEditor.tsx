@@ -149,6 +149,7 @@ export default function EventEditor() {
           searchPlaceholder="Search events..."
           onAdd={() => { setForm(EMPTY_EVENT); setEditingId(null); setShowForm(true); setSeoOpen(false) }}
           addLabel="New Event"
+          onView={(row) => window.open('/events/' + row.slug, '_blank')}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
