@@ -1,10 +1,14 @@
 /**
  * RichTextEditor.tsx
- * Reusable Quill-based rich text editor for the admin panel.
- * ReactQuill is dynamically imported AFTER mount to avoid Quill's
- * document-access crash during Vite module initialisation.
+ * Direct Quill v1 integration — no react-quill wrapper.
+ *
+ * react-quill@2 calls ReactDOM.findDOMNode() which was removed in React 19,
+ * causing a crash any time the editor renders.  By driving quill directly
+ * via a ref + useEffect we bypass that entirely and stay compatible with
+ * any React version.
  */
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef } from 'react'
+import 'quill/dist/quill.snow.css'
 import './RichTextEditor.css'
 
 interface RichTextEditorProps {
@@ -14,7 +18,6 @@ interface RichTextEditorProps {
   minHeight?: number
 }
 
-/* Full toolbar configuration */
 const TOOLBAR = [
   [{ header: [1, 2, 3, 4, false] }],
   ['bold', 'italic', 'underline', 'strike'],
@@ -35,73 +38,83 @@ const FORMATS = [
   'link', 'image',
 ]
 
-// Module-level cache so the dynamic import only runs once per session
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _QuillComponent: any = null
-
 export default function RichTextEditor({
   value,
   onChange,
   placeholder = 'Write your content here…',
   minHeight = 320,
 }: RichTextEditorProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const quillRef = useRef<any>(null)
-  const [ready, setReady] = useState(!!_QuillComponent)
 
+  // Keep latest onChange in a ref so the Quill listener never goes stale
+  const onChangeRef = useRef(onChange)
+  useEffect(() => { onChangeRef.current = onChange }, [onChange])
+
+  // Track the last value we pushed into Quill from outside (to avoid loops)
+  const lastExternalValue = useRef(value)
+
+  // ── Initialise Quill once on mount ──────────────────────────────────────
   useEffect(() => {
-    if (_QuillComponent) { setReady(true); return }
-    // Dynamically import react-quill + its CSS only after the component mounts
-    // This prevents Quill from touching `document` during Vite module init
-    Promise.all([
-      import('react-quill'),
-      // @ts-ignore – CSS-only side-effect import via dynamic path
-      import('react-quill/dist/quill.snow.css'),
-    ]).then(([mod]) => {
-      _QuillComponent = mod.default
-      setReady(true)
+    if (!containerRef.current || quillRef.current) return
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    import('quill').then(({ default: Quill }: { default: any }) => {
+      if (!containerRef.current || quillRef.current) return
+
+      const quill = new Quill(containerRef.current, {
+        theme: 'snow',
+        placeholder,
+        modules: {
+          toolbar: TOOLBAR,
+          clipboard: { matchVisual: false },
+        },
+        formats: FORMATS,
+      })
+
+      quillRef.current = quill
+
+      // Load the initial value
+      if (lastExternalValue.current) {
+        quill.root.innerHTML = lastExternalValue.current
+      }
+
+      // Notify parent on every user edit
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      quill.on('text-change', (_delta: any, _old: any, source: string) => {
+        if (source !== 'user') return
+        const html = quill.root.innerHTML
+        const val = html === '<p><br></p>' ? '' : html
+        lastExternalValue.current = val
+        onChangeRef.current(val)
+      })
     })
-  }, [])
 
-  const modules = useMemo(() => ({
-    toolbar: TOOLBAR,
-    clipboard: { matchVisual: false },
-  }), [])
+    return () => {
+      // On unmount just clear the ref; the DOM is cleaned up by React
+      quillRef.current = null
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intentionally empty — Quill must only be created once
 
-  if (!ready || !_QuillComponent) {
-    return (
-      <div
-        className="rte-wrapper"
-        style={{
-          minHeight,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: '1px solid #d1d5db',
-          borderRadius: 8,
-          color: '#94a3b8',
-          fontSize: 14,
-        }}
-      >
-        <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: 8 }} />
-        Loading editor…
-      </div>
-    )
-  }
-
-  const QE = _QuillComponent
+  // ── Sync external value changes (e.g. switching between Edit rows) ──────
+  useEffect(() => {
+    const quill = quillRef.current
+    if (!quill) return
+    if (value !== lastExternalValue.current) {
+      lastExternalValue.current = value
+      quill.root.innerHTML = value || ''
+    }
+  }, [value])
 
   return (
-    <div className="rte-wrapper" style={{ '--rte-min-height': `${minHeight}px` } as React.CSSProperties}>
-      <QE
-        ref={quillRef}
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={FORMATS}
-        placeholder={placeholder}
-      />
+    <div
+      className="rte-wrapper"
+      style={{ '--rte-min-height': `${minHeight}px` } as React.CSSProperties}
+    >
+      {/* Quill mounts its toolbar + editor inside this div */}
+      <div ref={containerRef} />
     </div>
   )
 }
