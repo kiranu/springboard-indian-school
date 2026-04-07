@@ -105,8 +105,9 @@ export default function Footer() {
             </div>
             <div className="col-md-auto">
               <ul className="vs-footer__bottom--menu text-white m-0 p-0" style={{ listStyle: 'none', display: 'flex', gap: '20px' }}>
-                <li><Link to="/" className="text-white text-decoration-none">Terms & Conditions</Link></li>
-                <li><Link to="/" className="text-white text-decoration-none">Privacy Policy</Link></li>
+                <li><Link to="/terms-and-conditions" className="text-white text-decoration-none">Terms &amp; Conditions</Link></li>
+                <li><Link to="/privacy-policy" className="text-white text-decoration-none">Privacy Policy</Link></li>
+                <li><Link to="/faq" className="text-white text-decoration-none">FAQ</Link></li>
               </ul>
             </div>
           </div>

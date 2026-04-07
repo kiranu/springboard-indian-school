@@ -20,6 +20,9 @@ import BlogList from './pages/Blog/BlogList'
 import BlogDetail from './pages/Blog/BlogDetail'
 import Contact from './pages/Contact'
 import ParentPortal from './pages/ParentPortal'
+import TermsAndConditions from './pages/TermsAndConditions'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import FAQ from './pages/FAQ'
 import NotFound from './pages/NotFound'
 
 // Admin
@@ -109,6 +112,9 @@ function App() {
                     <Route path="/blog/:slug" element={<BlogDetail />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/parent-portal" element={<ParentPortal />} />
+                    <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/faq" element={<FAQ />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </PublicLayout>
