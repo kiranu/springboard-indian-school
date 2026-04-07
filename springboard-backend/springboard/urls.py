@@ -25,6 +25,9 @@ urlpatterns = [
     # Public form
     path('api/enquiries/', include('apps.enquiries.urls')),
 
+    # Public site settings (no auth required)
+    path('api/settings/', include('apps.settings_app.public_urls', namespace='public_settings')),
+
     # Admin API routes (protected)
     path('api/admin/', include('apps.blog.admin_urls', namespace='admin_blog')),
     path('api/admin/', include('apps.events.admin_urls', namespace='admin_events')),

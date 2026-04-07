@@ -1,5 +1,8 @@
+import { useSettings } from '../../hooks/useSettings'
+
 export default function WhatsAppButton() {
-  const whatsappNumber = '919XXXXXXXXX'
+  const { settings } = useSettings()
+  const whatsappNumber = settings.whatsapp_number || '919XXXXXXXXX'
   const message = 'Hello! I am interested in admissions at Springboard Indian School'
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
