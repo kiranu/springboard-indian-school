@@ -11,6 +11,12 @@ class Blog(models.Model):
     content = models.TextField()
     featured_image = models.URLField(blank=True)
     is_published = models.BooleanField(default=False)
+    # SEO fields
+    meta_title = models.CharField(max_length=120, blank=True)
+    meta_description = models.TextField(max_length=300, blank=True)
+    keywords = models.TextField(blank=True)
+    og_image = models.URLField(blank=True)
+    canonical_url = models.URLField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

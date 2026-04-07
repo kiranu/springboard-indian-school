@@ -12,6 +12,15 @@ class Event(models.Model):
     location = models.CharField(max_length=200, default='School Campus')
     featured_image = models.URLField(blank=True)
     is_published = models.BooleanField(default=False)
+    # SEO fields
+    meta_title = models.CharField(max_length=120, blank=True)
+    meta_description = models.TextField(max_length=300, blank=True)
+    keywords = models.TextField(blank=True)
+    og_image = models.URLField(blank=True)
+    canonical_url = models.URLField(blank=True)
+    # GEO / structured data
+    geo_region = models.CharField(max_length=100, blank=True, help_text='e.g. IN-TG for Telangana, India')
+    geo_placename = models.CharField(max_length=200, blank=True, help_text='e.g. Hyderabad')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

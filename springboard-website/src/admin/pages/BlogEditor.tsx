@@ -14,12 +14,19 @@ interface Blog {
   content: string
   featured_image: string
   is_published: boolean
+  // SEO
+  meta_title: string
+  meta_description: string
+  keywords: string
+  og_image: string
+  canonical_url: string
   created_at: string
 }
 
 const EMPTY_BLOG: Omit<Blog, 'id' | 'created_at'> = {
   title: '', slug: '', category: 'School Life', author: 'Admin',
   excerpt: '', content: '', featured_image: '', is_published: false,
+  meta_title: '', meta_description: '', keywords: '', og_image: '', canonical_url: '',
 }
 
 const CATEGORIES = ['School Life', 'Academics', 'Events', 'Parenting Tips', 'Achievements', 'Announcements']
@@ -32,6 +39,7 @@ export default function BlogEditor() {
   const [form, setForm] = useState(EMPTY_BLOG)
   const [saving, setSaving] = useState(false)
   const [showMediaPicker, setShowMediaPicker] = useState(false)
+  const [seoOpen, setSeoOpen] = useState(false)
 
   const fetchBlogs = async () => {
     try {
@@ -39,9 +47,9 @@ export default function BlogEditor() {
       setBlogs(res.data.results || res.data)
     } catch {
       setBlogs([
-        { id: 1, title: 'Why Early Childhood Education Matters', slug: 'early-childhood-education', category: 'Academics', author: 'Admin', excerpt: 'Discover the lasting impact of quality early education...', content: '', featured_image: '', is_published: true, created_at: '2026-03-25' },
-        { id: 2, title: 'Annual Sports Day Highlights 2026', slug: 'sports-day-2026', category: 'Events', author: 'Admin', excerpt: 'Relive the exciting moments from our annual sports day...', content: '', featured_image: '', is_published: true, created_at: '2026-03-20' },
-        { id: 3, title: '10 Tips for Parents: Supporting Homework', slug: 'homework-tips-parents', category: 'Parenting Tips', author: 'Admin', excerpt: 'Simple strategies to help your child succeed...', content: '', featured_image: '', is_published: false, created_at: '2026-03-18' },
+        { id: 1, title: 'Why Early Childhood Education Matters', slug: 'early-childhood-education', category: 'Academics', author: 'Admin', excerpt: 'Discover the lasting impact of quality early education...', content: '', featured_image: '', is_published: true, meta_title: '', meta_description: '', keywords: '', og_image: '', canonical_url: '', created_at: '2026-03-25' },
+        { id: 2, title: 'Annual Sports Day Highlights 2026', slug: 'sports-day-2026', category: 'Events', author: 'Admin', excerpt: 'Relive the exciting moments from our annual sports day...', content: '', featured_image: '', is_published: true, meta_title: '', meta_description: '', keywords: '', og_image: '', canonical_url: '', created_at: '2026-03-20' },
+        { id: 3, title: '10 Tips for Parents: Supporting Homework', slug: 'homework-tips-parents', category: 'Parenting Tips', author: 'Admin', excerpt: 'Simple strategies to help your child succeed...', content: '', featured_image: '', is_published: false, meta_title: '', meta_description: '', keywords: '', og_image: '', canonical_url: '', created_at: '2026-03-18' },
       ])
     } finally {
       setLoading(false)
@@ -65,7 +73,6 @@ export default function BlogEditor() {
         setBlogs((prev) => [{ id: res.data.id || Date.now(), ...payload, created_at: new Date().toISOString().split('T')[0] } as Blog, ...prev])
       }
     } catch {
-      // offline mode — update locally
       if (editingId) {
         setBlogs((prev) => prev.map((b) => b.id === editingId ? { ...b, ...payload } : b))
       } else {
@@ -85,6 +92,8 @@ export default function BlogEditor() {
       title: row.title, slug: row.slug, category: row.category,
       author: row.author, excerpt: row.excerpt, content: row.content,
       featured_image: row.featured_image, is_published: row.is_published,
+      meta_title: row.meta_title || '', meta_description: row.meta_description || '',
+      keywords: row.keywords || '', og_image: row.og_image || '', canonical_url: row.canonical_url || '',
     })
     setShowForm(true)
   }
@@ -116,6 +125,9 @@ export default function BlogEditor() {
     </div>
   }
 
+  const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, boxSizing: 'border-box' as const }
+  const labelStyle = { display: 'block' as const, fontSize: 13, fontWeight: 600 as const, color: '#374151', marginBottom: 6 }
+
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
@@ -129,7 +141,7 @@ export default function BlogEditor() {
           columns={columns}
           data={blogs}
           searchPlaceholder="Search blogs..."
-          onAdd={() => { setForm(EMPTY_BLOG); setEditingId(null); setShowForm(true) }}
+          onAdd={() => { setForm(EMPTY_BLOG); setEditingId(null); setShowForm(true); setSeoOpen(false) }}
           addLabel="New Post"
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -144,28 +156,26 @@ export default function BlogEditor() {
             </button>
           </div>
 
+          {/* Core fields */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Title *</label>
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, boxSizing: 'border-box' }} />
+              <label style={labelStyle}>Title *</label>
+              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) })} style={inputStyle} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Slug</label>
+              <label style={labelStyle}>Slug</label>
               <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, boxSizing: 'border-box', color: '#64748b' }} />
+                style={{ ...inputStyle, color: '#64748b' }} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Category</label>
-              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, boxSizing: 'border-box' }}>
+              <label style={labelStyle}>Category</label>
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} style={inputStyle}>
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Author</label>
-              <input value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, boxSizing: 'border-box' }} />
+              <label style={labelStyle}>Author</label>
+              <input value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} style={inputStyle} />
             </div>
           </div>
 
@@ -194,16 +204,96 @@ export default function BlogEditor() {
           )}
 
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Excerpt</label>
+            <label style={labelStyle}>Excerpt</label>
             <textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows={2}
-              style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, resize: 'vertical', boxSizing: 'border-box' }} />
+              style={{ ...inputStyle, resize: 'vertical' }} />
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Content *</label>
+            <label style={labelStyle}>Content *</label>
             <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12}
               placeholder="Write your blog post content here... (HTML supported)"
-              style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 14, resize: 'vertical', fontFamily: 'monospace', boxSizing: 'border-box' }} />
+              style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace' }} />
+          </div>
+
+          {/* SEO & Meta Section */}
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: 10, marginBottom: 24, overflow: 'hidden' }}>
+            <button
+              onClick={() => setSeoOpen((o) => !o)}
+              style={{
+                width: '100%', padding: '14px 18px', background: '#f8fafc', border: 'none',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#1B4F8E',
+              }}
+            >
+              <span><i className="fa-solid fa-magnifying-glass" style={{ marginRight: 8 }} />SEO &amp; Meta Information</span>
+              <i className={`fa-solid fa-chevron-${seoOpen ? 'up' : 'down'}`} style={{ fontSize: 12, color: '#94a3b8' }} />
+            </button>
+
+            {seoOpen && (
+              <div style={{ padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                {/* Google preview */}
+                <div style={{ background: '#f8fafc', borderRadius: 8, padding: 14, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase' }}>Search Preview</div>
+                  <div style={{ fontSize: 17, color: '#1a0dab', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {form.meta_title || form.title || 'Post Title'}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#006621', margin: '2px 0' }}>springboardindianschool.edu.in/blog/{form.slug || 'post-slug'}</div>
+                  <div style={{ fontSize: 13, color: '#4d5156', lineHeight: 1.5 }}>
+                    {form.meta_description || form.excerpt || 'Meta description will appear here...'}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <label style={labelStyle}>
+                      Meta Title
+                      <span style={{ fontSize: 11, color: form.meta_title.length > 60 ? '#ef4444' : '#94a3b8', fontWeight: 400, marginLeft: 6 }}>
+                        {form.meta_title.length}/60
+                      </span>
+                    </label>
+                    <input value={form.meta_title} onChange={(e) => setForm({ ...form, meta_title: e.target.value })}
+                      placeholder={form.title || 'Leave blank to use post title'}
+                      style={{ ...inputStyle, borderColor: form.meta_title.length > 60 ? '#ef4444' : '#d1d5db' }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Keywords <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 400 }}>(comma-separated)</span></label>
+                    <input value={form.keywords} onChange={(e) => setForm({ ...form, keywords: e.target.value })}
+                      placeholder="e.g. school events, cbse hyderabad" style={inputStyle} />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>
+                    Meta Description
+                    <span style={{ fontSize: 11, color: form.meta_description.length > 160 ? '#ef4444' : '#94a3b8', fontWeight: 400, marginLeft: 6 }}>
+                      {form.meta_description.length}/160
+                    </span>
+                  </label>
+                  <textarea value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} rows={2}
+                    placeholder={form.excerpt || 'Leave blank to use excerpt'}
+                    style={{ ...inputStyle, resize: 'vertical', borderColor: form.meta_description.length > 160 ? '#ef4444' : '#d1d5db' }} />
+                </div>
+
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 14 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', marginBottom: 12 }}>Open Graph (Social Sharing)</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div>
+                      <label style={labelStyle}>OG Image URL</label>
+                      <input value={form.og_image} onChange={(e) => setForm({ ...form, og_image: e.target.value })}
+                        placeholder={form.featured_image || 'Leave blank to use featured image'} style={inputStyle} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Canonical URL <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 400 }}>(optional)</span></label>
+                      <input value={form.canonical_url} onChange={(e) => setForm({ ...form, canonical_url: e.target.value })}
+                        placeholder="https://springboardindianschool.edu.in/blog/..." style={inputStyle} />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>

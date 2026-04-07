@@ -44,12 +44,40 @@ export default function SeoSettings() {
             const apiPage = apiPages.find((p) => p.page_key === defaultPage.page_key)
             return apiPage || defaultPage
           })
-          // Append any extra pages from API not in defaults
           const extras = apiPages.filter((p) => !DEFAULT_PAGES.find((d) => d.page_key === p.page_key))
           const allPages = [...merged, ...extras]
           setPages(allPages)
           setActivePage(allPages[0])
           setApiPageKeys(new Set(apiPages.map((p) => p.page_key)))
+
+          // Auto-create any defaults missing from DB
+          const missingDefaults = DEFAULT_PAGES.filter(
+            (d) => !apiPages.find((p) => p.page_key === d.page_key)
+          )
+          if (missingDefaults.length > 0) {
+            const created = await Promise.all(
+              missingDefaults.map((page) =>
+                api.post('/admin/seo/', page).then((r) => r.data).catch(() => page)
+              )
+            )
+            setApiPageKeys((prev) => new Set([...prev, ...created.map((p: SeoPage) => p.page_key)]))
+            setPages((prev) =>
+              prev.map((p) => {
+                const c = created.find((cr: SeoPage) => cr.page_key === p.page_key)
+                return c || p
+              })
+            )
+          }
+        } else {
+          // DB is empty — create all defaults in parallel
+          const created = await Promise.all(
+            DEFAULT_PAGES.map((page) =>
+              api.post('/admin/seo/', page).then((r) => r.data).catch(() => page)
+            )
+          )
+          setPages(created)
+          setActivePage(created[0])
+          setApiPageKeys(new Set(created.map((p: SeoPage) => p.page_key)))
         }
       } catch { /* use defaults */ }
     }
