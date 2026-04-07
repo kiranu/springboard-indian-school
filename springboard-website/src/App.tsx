@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ScrollToTop from './components/ScrollToTop'
+import Preloader from './components/Preloader/Preloader'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
 import WhatsAppButton from './components/shared/WhatsAppButton'
@@ -70,6 +71,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
+        {/* Playful preschool preloader — fades out after 2 s */}
+        <Preloader />
         <BrowserRouter>
           <ScrollToTop />
           <Routes>

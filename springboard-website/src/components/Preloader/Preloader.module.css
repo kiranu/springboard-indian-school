@@ -1,0 +1,373 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Preloader.module.css
+   Playful Preschool Theme — Springboard Indian School
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Palette
+   -------
+   Yellow   #FFD43B   Sky-blue  #74C0FC
+   Pink     #F783AC   Green     #69DB7C / #4ADE80
+   Orange   #FFA94D   Purple    #B197FC
+   Red      #FF6B6B   Dark bg   #5C4A8A (text)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── Full-screen overlay ──────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  /* Warm cream → sky blue → blush pink diagonal gradient */
+  background: linear-gradient(
+    155deg,
+    #fff9db 0%,
+    #e3f2fd 50%,
+    #fce4ec 100%
+  );
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* Fade-out transition target */
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity  0.65s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fadeOut {
+  opacity: 0;
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+/* ── Twinkling stars ─────────────────────────────────────── */
+.star {
+  position: absolute;
+  user-select: none;
+  animation: twinkle 2.6s ease-in-out infinite;
+  will-change: opacity, transform;
+  line-height: 1;
+}
+
+/* Scattered star positions + individual colours / sizes */
+.s0  { top:  7%;  left:  6%;  font-size: 13px; color: #FFD43B; animation-delay: 0.0s; }
+.s1  { top: 13%;  left: 22%;  font-size: 19px; color: #FFD43B; animation-delay: 0.4s; }
+.s2  { top:  5%;  left: 44%;  font-size: 10px; color: #F783AC; animation-delay: 0.7s; }
+.s3  { top: 11%;  right: 20%; font-size: 16px; color: #FFD43B; animation-delay: 0.2s; }
+.s4  { top:  8%;  right:  7%; font-size: 14px; color: #74C0FC; animation-delay: 1.0s; }
+.s5  { top: 36%;  left:  3%;  font-size: 11px; color: #FFD43B; animation-delay: 1.3s; }
+.s6  { top: 40%;  right:  3%; font-size: 13px; color: #B197FC; animation-delay: 0.6s; }
+.s7  { top: 22%;  left:  2%;  font-size:  9px; color: #FFD43B; animation-delay: 1.7s; }
+.s8  { top: 24%;  right:  2%; font-size: 10px; color: #69DB7C; animation-delay: 1.0s; }
+.s9  { top: 54%;  right:  5%; font-size: 11px; color: #FFD43B; animation-delay: 1.9s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2;  transform: scale(0.7);  }
+  50%       { opacity: 1;   transform: scale(1.3);  }
+}
+
+/* ── Sun ─────────────────────────────────────────────────── */
+.sun {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: sunFloat 3.8s ease-in-out infinite;
+  filter: drop-shadow(0 8px 20px rgba(255, 212, 59, 0.55));
+  will-change: transform;
+}
+
+@keyframes sunFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0px)   rotate(-5deg); }
+  50%       { transform: translateX(-50%) translateY(-12px) rotate(5deg);  }
+}
+
+/* ── Clouds ─────────────────────────────────────────────── */
+.cloud {
+  position: absolute;
+  filter: drop-shadow(0 5px 14px rgba(0, 0, 0, 0.07));
+  will-change: transform;
+}
+
+/* Left cloud — slightly lower */
+.cloudL {
+  top: 62px;
+  left: -10px;
+  animation: cloudDrift 7s ease-in-out infinite;
+}
+
+/* Right cloud — slightly higher, opposite drift */
+.cloudR {
+  top: 48px;
+  right: -10px;
+  animation: cloudDrift 7s ease-in-out infinite reverse;
+  animation-delay: 1.2s;
+}
+
+/* Small left cloud — lower, slower, translucent */
+.cloudL2 {
+  top: 120px;
+  left: 48px;
+  opacity: 0.5;
+  animation: cloudDrift 10s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0);   }
+  50%       { transform: translateX(16px); }
+}
+
+/* ── Centre card ─────────────────────────────────────────── */
+.card {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 42px 52px 38px;
+
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 30px;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+
+  box-shadow:
+    0 10px 50px rgba(0, 0, 0, 0.10),
+    0 2px  0   rgba(255, 255, 255, 0.6) inset;
+
+  animation: cardPop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes cardPop {
+  from { opacity: 0; transform: scale(0.6) translateY(24px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0);    }
+}
+
+/* ── Logo ──────────────────────────────────────────────── */
+.logoWrap {
+  width: 170px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  animation: logoBob 2.8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes logoBob {
+  0%, 100% { transform: translateY(0);   }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ── Loading text ────────────────────────────────────────── */
+.text {
+  margin: 0;
+  /* Friendly, rounded typeface — falls back gracefully */
+  font-family:
+    'Nunito',
+    'Fredoka One',
+    'Comic Sans MS',
+    'Chalkboard SE',
+    system-ui,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #5c4a8a;
+  letter-spacing: 0.4px;
+  text-align: center;
+  animation: textPop 2.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes textPop {
+  0%, 100% { opacity: 0.8; transform: scale(0.97); }
+  50%       { opacity: 1;   transform: scale(1.02); }
+}
+
+/* ── Progress dots ───────────────────────────────────────── */
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.dot {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: var(--dot-color, #b197fc);
+  animation: dotBounce 1.15s ease-in-out infinite;
+  animation-delay: var(--dot-delay, 0s);
+  will-change: transform, opacity;
+}
+
+@keyframes dotBounce {
+  0%, 70%, 100% { transform: translateY(0)    scale(1);    opacity: 0.6; }
+  35%            { transform: translateY(-14px) scale(1.25); opacity: 1;   }
+}
+
+/* ── Green ground strip ──────────────────────────────────── */
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: -3%;
+  right: -3%;
+  height: 74px;
+  background: linear-gradient(180deg, #86efac 0%, #4ade80 100%);
+  /* Gentle hill curve */
+  border-radius: 60% 60% 0 0 / 30px 30px 0 0;
+  box-shadow: 0 -4px 24px rgba(74, 222, 128, 0.3);
+}
+
+/* ── Bouncing balls ──────────────────────────────────────── */
+.balls {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 18px;
+  height: 86px;
+}
+
+.ball {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--ball-color, #ff6b6b);
+
+  animation: ballBounce 1.25s ease-in-out infinite;
+  animation-delay: var(--ball-delay, 0s);
+
+  position: relative;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.18),
+    0 2px  5px rgba(0, 0, 0, 0.10);
+  will-change: transform;
+}
+
+/* Shiny glare on each ball */
+.ball::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 9px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.58);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+}
+
+/* Shadow beneath each ball — squashes on landing */
+.ball::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(1);
+  width: 26px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  animation: shadowPulse 1.25s ease-in-out infinite;
+  animation-delay: var(--ball-delay, 0s);
+}
+
+/*
+  Physically-correct bounce:
+  • Ease-in going up (gravity slows it down)
+  • Ease-out coming down (gravity speeds it up)
+  • Squash on impact (scaleX > 1, scaleY < 1)
+  • Stretch at peak (scaleX < 1, scaleY > 1)
+*/
+@keyframes ballBounce {
+  0%   {
+    transform: translateY(0) scaleX(1)    scaleY(1);
+    animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0);
+  }
+  45%  {
+    transform: translateY(-54px) scaleX(0.9)  scaleY(1.1);
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  82%  {
+    transform: translateY(0) scaleX(1.28) scaleY(0.76);
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  100% {
+    transform: translateY(0) scaleX(1)    scaleY(1);
+  }
+}
+
+@keyframes shadowPulse {
+  0%, 100% { transform: translateX(-50%) scaleX(1.3);   opacity: 0.20; }
+  45%       { transform: translateX(-50%) scaleX(0.6);   opacity: 0.08; }
+  82%       { transform: translateX(-50%) scaleX(1.8);   opacity: 0.30; }
+}
+
+/* ── Responsive tweaks ───────────────────────────────────── */
+@media (max-width: 480px) {
+  .card {
+    padding: 34px 28px 30px;
+  }
+  .logoWrap {
+    width: 140px;
+    height: 64px;
+  }
+  .text {
+    font-size: 14px;
+  }
+  .ball {
+    width: 24px;
+    height: 24px;
+  }
+  .balls {
+    gap: 12px;
+  }
+  /* Hide the small back cloud on tiny screens */
+  .cloudL2 {
+    display: none;
+  }
+}
+
+/* ── Accessibility — honour reduced-motion preference ─────── */
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .star,
+  .sun,
+  .cloud,
+  .card,
+  .logoImg,
+  .text,
+  .dot,
+  .ball,
+  .ball::after {
+    animation: none !important;
+    transition: opacity 0.3s ease !important;
+  }
+  /* Still fade out, just without scale */
+  .fadeOut {
+    opacity: 0 !important;
+    transform: none !important;
+  }
+}
