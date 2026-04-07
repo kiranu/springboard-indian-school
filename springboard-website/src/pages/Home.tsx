@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaArrowRight, FaArrowLeft, FaStar } from 'react-icons/fa6'
@@ -12,6 +13,14 @@ import 'swiper/css/navigation'
 
 import SeoHead from '../components/seo/SeoHead'
 import AdmissionCta from '../components/shared/AdmissionCta'
+import api from '../lib/api'
+
+interface GalleryItem {
+  id: number
+  title: string
+  category: string
+  image_url: string
+}
 
 // Animation variants
 const fadeInUp = {
@@ -29,7 +38,24 @@ const fadeInRight = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
 }
 
+const FALLBACK_GALLERY = [
+  { id: 1, title: 'Campus Life', category: 'Campus', image_url: '/assets/img/gallery/gallery-h1-1-1.jpg' },
+  { id: 2, title: 'Classroom', category: 'Academics', image_url: '/assets/img/gallery/gallery-h1-1-2.jpg' },
+  { id: 3, title: 'Sports Day', category: 'Sports', image_url: '/assets/img/gallery/gallery-h1-1-3.jpg' },
+  { id: 4, title: 'Celebrations', category: 'Events', image_url: '/assets/img/gallery/gallery-h1-1-4.jpg' },
+]
+
 export default function Home() {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(FALLBACK_GALLERY)
+
+  useEffect(() => {
+    api.get('/gallery/')
+      .then((res) => {
+        const data: GalleryItem[] = Array.isArray(res.data) ? res.data : res.data.results || []
+        if (data.length > 0) setGalleryItems(data.slice(0, 4))
+      })
+      .catch(() => { /* keep fallback */ })
+  }, [])
 
   return (
     <>
@@ -303,17 +329,24 @@ export default function Home() {
             </div>
           </div>
           <div className="vs-gallery--row">
-            {[1, 2, 3, 4].map((num) => (
-              <motion.div key={num} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className={`vs-gallery vs-gallery--col${num}`}>
+            {galleryItems.map((item, idx) => (
+              <motion.div key={item.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className={`vs-gallery vs-gallery--col${idx + 1}`}>
                 <div className="vs-gallery__figure">
                   <Link className="vs-gallery__image--link" to="/gallery">
-                    <img className="vs-gallery__image" src={`/assets/img/gallery/gallery-h1-1-${num}.jpg`} alt="Gallery" loading="lazy" />
+                    <img
+                      className="vs-gallery__image"
+                      src={item.image_url}
+                      alt={item.title}
+                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = `/assets/img/gallery/gallery-h1-1-${idx + 1}.jpg` }}
+                    />
                   </Link>
                 </div>
                 <div className="vs-gallery__hover">
-                  <Link to="/gallery" className="vs-gallery__cate">School</Link>
+                  <Link to="/gallery" className="vs-gallery__cate">{item.category}</Link>
                   <Link className="vs-gallery__heading--link" to="/gallery">
-                    <h4 className="vs-gallery__heading">Kids ground</h4>
+                    <h4 className="vs-gallery__heading">{item.title}</h4>
                   </Link>
                 </div>
               </motion.div>
@@ -391,7 +424,12 @@ export default function Home() {
               modules={[Autoplay]}
               loop={true}
               autoplay={{ delay: 6000 }}
-              breakpoints={{ 0: { slidesPerView: 1 }, 768: { slidesPerView: 2 }, 992: { slidesPerView: 3 }, 1200: { slidesPerView: 4 } }}
+              breakpoints={{
+                  0:    { slidesPerView: 1, spaceBetween: 20 },
+                  768:  { slidesPerView: 2, spaceBetween: 24 },
+                  992:  { slidesPerView: 3, spaceBetween: 28 },
+                  1200: { slidesPerView: 3, spaceBetween: 30 },
+                }}
               className="vs-carousel vs-carousel--class"
             >
               {[
