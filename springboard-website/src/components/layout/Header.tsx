@@ -123,8 +123,8 @@ export default function Header() {
                       <li className="menu-item-has-children">
                         <Link to="/academics" className="vs-svg-assets">
                           ACADEMICS
-                          <svg xmlns="http://www.w3.org/2000/svg" width="87" height="31" viewBox="0 0 87 31" fill="none">
-                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L83.1379 2.86682C85.2921 2.94111 87 4.70896 87 6.86445V25.0909C87 27.2642 85.2647 29.0399 83.0919 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="132" height="31" viewBox="0 0 132 31" fill="none">
+                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L128.138 2.86682C130.292 2.94111 132 4.70896 132 6.86445V25.0909C132 27.2642 130.265 29.0399 128.092 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
                           </svg>
                         </Link>
                         <ul className="sub-menu">
@@ -138,16 +138,16 @@ export default function Header() {
                       <li>
                         <Link to="/facilities" className="vs-svg-assets">
                           FACILITIES
-                          <svg xmlns="http://www.w3.org/2000/svg" width="87" height="31" viewBox="0 0 87 31" fill="none">
-                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L83.1379 2.86682C85.2921 2.94111 87 4.70896 87 6.86445V25.0909C87 27.2642 85.2647 29.0399 83.0919 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="128" height="31" viewBox="0 0 128 31" fill="none">
+                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L124.138 2.86682C126.292 2.94111 128 4.70896 128 6.86445V25.0909C128 27.2642 126.265 29.0399 124.092 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
                           </svg>
                         </Link>
                       </li>
                       <li>
                         <Link to="/contact" className="vs-svg-assets">
                           CONTACT
-                          <svg xmlns="http://www.w3.org/2000/svg" width="87" height="31" viewBox="0 0 87 31" fill="none">
-                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L83.1379 2.86682C85.2921 2.94111 87 4.70896 87 6.86445V25.0909C87 27.2642 85.2647 29.0399 83.0919 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="107" height="31" viewBox="0 0 107 31" fill="none">
+                            <path d="M0 4.14031C0 1.87713 1.87602 0.0646902 4.13785 0.142684L103.138 2.86682C105.292 2.94111 107 4.70896 107 6.86445V25.0909C107 27.2642 105.265 29.0399 103.092 29.0898L4.09193 30.9059C1.84739 30.9575 0 29.1521 0 26.907V4.14031Z" fill="#70167E"></path>
                           </svg>
                         </Link>
                       </li>
